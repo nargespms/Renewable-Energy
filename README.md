@@ -4,6 +4,8 @@
 
 We are creating a dashboard to visualize the cost of moving from fossil fuels to renewable energy in Canada. The dashboard will show the economic impact of the transition on each province and the electricity production of each province.
 
+### Instructions
+
 To start the local preview server, run:
 
 ```
