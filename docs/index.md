@@ -108,7 +108,9 @@ function renderStackBar(width, height) {
   </div>
 
   <div class="card">
-    <h2 class="center">Electricity Generation</h2>
+    <h2 class="center">Electricity Generation Source
+    <span> (GWh)</span>
+    </h2>
     ${resize((width) => renderStackBar(width, width * 0.8))}
   </div>
 </div>
@@ -120,7 +122,7 @@ function renderStackBar(width, height) {
   }
   .card h2 {
     font-size: 35px;
-    margin-bottom: 1rem;
+    margin-bottom: 24px;
 
   }
   </style>
