@@ -1,0 +1,15 @@
+[
+  { "province": "Alberta", "impact": 35 },
+  { "province": "British Columbia", "impact": -10 },
+  { "province": "Manitoba", "impact": 20 },
+  { "province": "New Brunswick", "impact": 5 },
+  { "province": "Newfoundland and Labrador", "impact": -5 },
+  { "province": "Nova Scotia", "impact": 10 },
+  { "province": "Ontario", "impact": 25 },
+  { "province": "Prince Edward Island", "impact": 15 },
+  { "province": "Quebec", "impact": 30 },
+  { "province": "Saskatchewan", "impact": -15 },
+  { "province": "Northwest Territories", "impact": 5 },
+  { "province": "Nunavut", "impact": -20 },
+  { "province": "Yukon Territory", "impact": 10 }
+]

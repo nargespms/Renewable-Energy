@@ -1,115 +1,126 @@
 ---
+theme: dashboard
+title: Home
 toc: false
 ---
 
-<style>
-
-.hero {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  font-family: var(--sans-serif);
-  margin: 4rem 0 8rem;
-  text-wrap: balance;
-  text-align: center;
-}
-
-.hero h1 {
-  margin: 2rem 0;
-  max-width: none;
-  font-size: 14vw;
-  font-weight: 900;
-  line-height: 1;
-  background: linear-gradient(30deg, var(--theme-foreground-focus), currentColor);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.hero h2 {
-  margin: 0;
-  max-width: 34em;
-  font-size: 20px;
-  font-style: initial;
-  font-weight: 500;
-  line-height: 1.5;
-  color: var(--theme-foreground-muted);
-}
-
-@media (min-width: 640px) {
-  .hero h1 {
-    font-size: 90px;
-  }
-}
-
-</style>
-
-<div class="hero">
-  <h1>Hello, Observable Framework</h1>
-  <h2>Welcome to your new project! Edit&nbsp;<code style="font-size: 90%;">docs/index.md</code> to change this page.</h2>
-  <a href="https://observablehq.com/framework/getting-started">Get started<span style="display: inline-block; margin-left: 0.25rem;">↗︎</span></a>
-</div>
-
-<div class="grid grid-cols-2" style="grid-auto-rows: 504px;">
-  <div class="card">${
-    resize((width) => Plot.plot({
-      title: "Your awesomeness over time 🚀",
-      subtitle: "Up and to the right!",
-      width,
-      y: {grid: true, label: "Awesomeness"},
-      marks: [
-        Plot.ruleY([0]),
-        Plot.lineY(aapl, {x: "Date", y: "Close", tip: true})
-      ]
-    }))
-  }</div>
-  <div class="card">${
-    resize((width) => Plot.plot({
-      title: "How big are penguins, anyway? 🐧",
-      width,
-      grid: true,
-      x: {label: "Body mass (g)"},
-      y: {label: "Flipper length (mm)"},
-      color: {legend: true},
-      marks: [
-        Plot.linearRegressionY(penguins, {x: "body_mass_g", y: "flipper_length_mm", stroke: "species"}),
-        Plot.dot(penguins, {x: "body_mass_g", y: "flipper_length_mm", stroke: "species", tip: true})
-      ]
-    }))
-  }</div>
-</div>
+<!-- Load the data -->
 
 ```js
-const aapl = FileAttachment("aapl.csv").csv({typed: true});
-const penguins = FileAttachment("penguins.csv").csv({typed: true});
+// Load the economic impact data and the GeoJSON map
+const impactData = FileAttachment("./data/economicImpact.json").json();
+const canadaMap = FileAttachment("./data/canadaProvinces.geojson").json();
+
+const electricity = FileAttachment("./data/electricityProduction.csv").csv({
+  typed: true,
+});
 ```
 
----
+```js
+const getImpactsByProvinces = () => {
+  const map = new Map(impactData.map((d) => [d.province, +d.impact]));
+  canadaMap.features.forEach((g) => {
+    g.properties.impactRate = map.get(g.properties.name);
+  });
+  return canadaMap;
+};
+```
 
-## Next steps
+```js
+function renderMap(width, height) {
+  const provinces = getImpactsByProvinces().features;
 
-Here are some ideas of things you could try…
+  return Plot.plot({
+    projection: ({ width, height }) =>
+      d3
+        .geoConicEquidistant()
+        .rotate([-86, -129.5, -170])
+        .translate([width / 2, height / 2])
+        .scale(width * 1.1),
+    color: {
+      scheme: "rdylgn",
+      legend: true,
+      tickFormat: "d",
+      n: 6,
+      label: "Impact Rate (%)",
+    },
+    width,
+    height,
 
-<div class="grid grid-cols-4">
+    marks: [
+      Plot.geo(provinces, {
+        fill: (d) => d.properties.impactRate,
+        opacity: 0.8,
+      }),
+
+      Plot.tip(
+        provinces,
+        Plot.pointer(
+          Plot.centroid({
+            title: (d) => `${d.properties.name}: ${d.properties.impactRate}%`,
+          })
+        )
+      ),
+    ],
+  });
+}
+```
+
+```js
+const tidy = electricity.columns.slice(1).flatMap((source) =>
+  electricity.map((d) => ({
+    province: d.ProvinceCode,
+    source,
+    production: d[source],
+  }))
+);
+```
+
+```js
+function renderStackBar(width, height) {
+  return Plot.plot({
+    width,
+    height,
+    x: { label: "ProvinceCode" },
+    color: {
+      scheme: "Spectral",
+      legend: true,
+      width: 340,
+      label: "Source",
+    },
+    marks: [
+      Plot.barY(tidy, {
+        tip: true,
+        x: "province",
+        y: "production",
+        fill: "source",
+        sort: { color: null, y: "-x", reduce: "first" },
+      }),
+    ],
+  });
+}
+```
+
+<div class="grid grid-cols-2" style="">
   <div class="card">
-    Chart your own data using <a href="https://observablehq.com/framework/lib/plot"><code>Plot</code></a> and <a href="https://observablehq.com/framework/javascript/files"><code>FileAttachment</code></a>. Make it responsive using <a href="https://observablehq.com/framework/javascript/display#responsive-display"><code>resize</code></a>.
+    <h2 class="center">Economic Impact</h2>
+    ${resize((width) => renderMap(width, width * 0.8))}
   </div>
+
   <div class="card">
-    Create a <a href="https://observablehq.com/framework/routing">new page</a> by adding a Markdown file (<code>whatever.md</code>) to the <code>docs</code> folder.
-  </div>
-  <div class="card">
-    Add a drop-down menu using <a href="https://observablehq.com/framework/javascript/inputs"><code>Inputs.select</code></a> and use it to filter the data shown in a chart.
-  </div>
-  <div class="card">
-    Write a <a href="https://observablehq.com/framework/loaders">data loader</a> that queries a local database or API, generating a data snapshot on build.
-  </div>
-  <div class="card">
-    Import a <a href="https://observablehq.com/framework/javascript/imports">recommended library</a> from npm, such as <a href="https://observablehq.com/framework/lib/leaflet">Leaflet</a>, <a href="https://observablehq.com/framework/lib/dot">GraphViz</a>, <a href="https://observablehq.com/framework/lib/tex">TeX</a>, or <a href="https://observablehq.com/framework/lib/duckdb">DuckDB</a>.
-  </div>
-  <div class="card">
-    Ask for help, or share your work or ideas, on the <a href="https://talk.observablehq.com/">Observable forum</a>.
-  </div>
-  <div class="card">
-    Visit <a href="https://github.com/observablehq/framework">Framework on GitHub</a> and give us a star. Or file an issue if you’ve found a bug!
+    <h2 class="center">Electricity Generation</h2>
+    ${resize((width) => renderStackBar(width, width * 0.8))}
   </div>
 </div>
+
+<style>
+  .center {
+    margin: 0;
+    text-align: center;
+  }
+  .card h2 {
+    font-size: 35px;
+    margin-bottom: 1rem;
+
+  }
+  </style>
