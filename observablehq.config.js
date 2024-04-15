@@ -1,17 +1,17 @@
 // See https://observablehq.com/framework/config for documentation.
 export default {
   // The project’s title; used in the sidebar and webpage titles.
-  title: "Renewable Energy",
+  title: "Renewable Energy Progress",
 
   // The pages and sections in the sidebar. If you don’t specify this option,
   // all pages will be listed in alphabetical order. Listing pages explicitly
   // lets you organize them into sections and have unlisted pages.
-  pages: [{ name: "Dashboard", path: "/index" }],
+  pages: [{ name: "Home Page", path: "/index" }],
 
   // Some additional configuration options and their defaults:
   theme: "light", // try "light", "dark", "slate", etc.
   // header: "", // what to show in the header (HTML)
-  footer: "", // what to show in the footer (HTML)
+  footer: "Winter 2024 - Information Visualization CS736", // what to show in the footer (HTML)
   // toc: true, // whether to show the table of contents
   pager: false, // whether to show previous & next links in the footer
   // root: "docs", // path to the source root for preview
