@@ -144,8 +144,8 @@ function renderMap(year, width, height) {
       d3
         .geoConicEquidistant()
         .rotate([-86, -129.5, -170])
-        .translate([width / 2, height / 2])
-        .scale(width * 0.9),
+        .translate([width/2, height/2])
+        .scale(width * 1.1),
     color: {
       scheme: "Greens",
       legend: true,
@@ -154,7 +154,7 @@ function renderMap(year, width, height) {
       domain: [0, 100], // Only include positive values in the color scale domain
     },
     width,
-    height,
+    height: height*1.4,
 
     marks: [
       on(geo, {
