@@ -7,6 +7,7 @@ toc: false
 <!-- Load the data -->
 
 ```js
+
 // Load the economic impact data and the GeoJSON map
 const impactData = FileAttachment("./data/economicImpact.json").json();
 const canadaMap = FileAttachment("./data/canadaProvinces.geojson").json();
@@ -317,6 +318,97 @@ const input = Inputs.range([2012, 2022], {
 const year = view(input);
 ```
 
+```js
+const provinceMap = {
+  "Alberta": "AB",
+  "British Columbia": "BC",
+  "Manitoba": "MB",
+  "New Brunswick": "NB",
+  "Newfoundland and Labrador": "NL",
+  "Nova Scotia": "NS",
+  "Ontario": "ON",
+  "Prince Edward Island": "PE",
+  "Quebec": "QC",
+  "Saskatchewan": "SK",
+  "Northwest Territories": "NT",
+  "Nunavut": "NU",
+  "Yukon Territory": "YT"
+};
+
+function getGradientColorWithTextColor(color, percentage) {
+  // Ensure the percentage is between 0 and 1
+  percentage = Math.max(0, Math.min(1, percentage));
+
+  // Converts hex color to RGB
+  const hexToRgb = (hex) => {
+    hex = hex.replace(/^#/, '');
+    const bigint = parseInt(hex, 16);
+    const r = (bigint >> 16) & 255;
+    const g = (bigint >> 8) & 255;
+    const b = bigint & 255;
+    return { r, g, b };
+  };
+
+  // Converts RGB to hex
+  const rgbToHex = (r, g, b) => {
+    return "#" + [r, g, b].map(x => {
+      const hex = x.toString(16);
+      return hex.length === 1 ? '0' + hex : hex;
+    }).join('');
+  };
+
+  // Linear interpolation between white (255,255,255) and the target color
+  const interpolateColor = (color, percentage) => {
+    const { r, g, b } = hexToRgb(color);
+    const newR = Math.round((255 - r) * (1 - percentage) + r);
+    const newG = Math.round((255 - g) * (1 - percentage) + g);
+    const newB = Math.round((255 - b) * (1 - percentage) + b);
+    return { r: newR, g: newG, b: newB };
+  };
+
+  // Calculate luminance
+  const luminance = (r, g, b) => {
+    const a = [r, g, b].map(function (v) {
+      v /= 255;
+      return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+    });
+    return a[0] * 0.2126 + a[1] * 0.7152 + a[2] * 0.0722;
+  };
+
+  // Get the interpolated RGB color
+  const { r, g, b } = interpolateColor(color, percentage);
+  const hexColor = rgbToHex(r, g, b);
+
+  // Decide text color based on luminance
+  const textLuminance = luminance(r, g, b);
+  const textColor = textLuminance > 0.179 ? 'black' : 'white';
+
+  return {
+    backgroundColor: hexColor,
+    textColor: textColor
+  };
+}
+
+
+
+function getTable(year, id) {
+  const provinces = getPercentageByProvinces(year).features.map(p => ({name: p.properties.name, percentage: p.properties.percentage})).sort((a,b) => b.percentage - a.percentage);
+  let html = '';
+  
+  provinces.forEach(p => {
+    p.code = provinceMap[p.name];
+    p.color = getGradientColorWithTextColor('#1A4320', p.percentage/100);
+
+  html += `<td style="background-color:${p.color.backgroundColor}; color: ${p.color.textColor}">${p.code}</td>`;
+
+  })
+
+  document.getElementById(id).innerHTML = html;
+
+  return '';
+}
+``` 
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
 <div class="dashboardTitle">
@@ -331,22 +423,10 @@ const year = view(input);
       <div>${input}</div>
     </div>
     <div>
-    <h4 class="mb-8">Order of Transition as of 2022</h4>
+    <h4 class="mb-8">Order of Transition as of ${year}</h4>
     <table>
-      <tr>
-        <th class="mn">MN</th>
-        <th class="qc">QC</th>
-        <th class="pe">PE</th>
-        <th class="nl">NL</th>
-        <th class="bc">BC</th>
-        <th class="yt">YT</th>
-        <th class="on">ON</th>
-        <th class="nt">NT</th>
-        <th class="nb">NB</th>
-        <th class="ns">NS</th>
-        <th class="sk">SK</th>
-        <th class="ab">AB</th>
-        <th class="nu">NU</th>
+      <tr id="provincesTable">
+        ${getTable(year, 'provincesTable') }
       </tr>
     </table>
     </div>
@@ -512,39 +592,5 @@ const year = view(input);
   th {
     background-color: #f2f2f2;
   }
-  /* provinces colors */
-  .mn {
-    background-color: #00451b;
-    color:white
-  }
-  .qc , .pe , .nl {
-    background-color: #00481c;
-    color:white
-  }
-  .bc {
-    background-color: #025e26;
-    color:white
-  }
-  .yt {
-    background-color: #056a2c;
-    color:white
-  }
-  .on {
-    background-color: #9ed79a;
-  }
-  .nt {
-    background-color: #a1d99c;
-  }
-  .nb {
-    background-color: #b1e0ab;
-  }
-  .ns {
-    background-color: #cbebc6;
-  }
-  .sk {
-    background-color: #d3efcd;
-  }
-  .ab {
-    background-color: #e1f3db;
-  }
+
   </style>
