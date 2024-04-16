@@ -145,7 +145,7 @@ function renderMap(year, width, height) {
         .geoConicEquidistant()
         .rotate([-86, -129.5, -170])
         .translate([width / 2, height / 2])
-        .scale(width * 0.7),
+        .scale(width * 0.9),
     color: {
       scheme: "Greens",
       legend: true,
@@ -320,56 +320,64 @@ const year = view(input);
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
 <div class="dashboardTitle">
-
-<h1>
-Renewable Energy Transition Progress in Canada
-</h1>
+  <h1>
+  Renewable Energy Transition Progress in Canada
+  </h1>
 </div>
-<div>${geoInput}</div>
-<div>${input}</div>
+<div class="mainWrapper">
+  <div>${geoInput}</div>
+  <div>${input}</div>
 
-<div class="grid grid-cols-2">
-<!-- Geo Map -->
-  <div class="card relative">
-   <div class="tooltip"> 
-      <i class="fa fa-circle-info" style="font-size:13px;"></i>
-      <span class="tooltiptext">This Geo Map shows the Percentage of renewable generated electricity in each province</span>
-    </div>
-    <h3 class="center">% Of Renewable Electricity (${year})</h3>
-    ${resize((width) => renderMap(year, width, width * 0.5 ))} 
-  </div>
-
-  <div>
-  <!-- BarChart -->
-    <div class="card relative margin0">
-      <div class="tooltip"> 
-       <i class="fa fa-circle-info" style="font-size:13px;"></i>
-       <span class="tooltiptext">This bar chart displays the composition of electricity generation by source within the selected geographical region, such as Canada or a specific province, for a given year.   </span>
-      </div>
-      <h3 class="center">Electricity Generation Sources in 
-        <span class="selectedGeo">${selectedGeo}</span> (${year})<span> (MWh)</span>
-      </h3>
-      ${resize((width) => drawChart(selectedGeo, width, width * 0.3 ))}
-    </div>
-    <!-- Histogram -->
+  <div class="grid grid-cols-2">
+  <!-- Geo Map -->
     <div class="card relative">
-      <div class="tooltip">
+    <div class="tooltip"> 
         <i class="fa fa-circle-info" style="font-size:13px;"></i>
-        <span class="tooltiptext">This area chart illustrates the trend of electricity generated from different sources in Canada over a decade, measured in megawatt-hours (MWh).  </span>
+        <span class="tooltiptext">This Geo Map shows the Percentage of renewable generated electricity in each province</span>
       </div>
-      <h3 class="center">Electricity Generation Sources in
-      <span class="selectedGeo">${selectedGeo}</span>
-      <span> (MWh)</span>
-      </h3>
-      ${resize((width) => drawAreaChart(selectedGeo, width, width * 0.3 ))}
+      <h3 class="center">% Of Renewable Electricity (${year})</h3>
+      ${resize((width) => renderMap(year, width, width * 0.5 ))} 
     </div>
+    <div>
+    <!-- BarChart -->
+      <div class="card relative marginTop0">
+        <div class="tooltip">
+        <i class="fa fa-circle-info" style="font-size:13px;"></i>
+        <span class="tooltiptext">This bar chart displays the composition of electricity generation by source within the selected geographical region, such as Canada or a specific province, for a given year.   </span>
+        </div>
+        <h3 class="center">Electricity Generation Sources in
+          <span class="selectedGeo">${selectedGeo}</span> (${year})<span> (MWh)</span>
+        </h3>
+        ${resize((width) => drawChart(selectedGeo, width, width * 0.3 ))}
+      </div>
+      <!-- Histogram -->
+      <div class="card relative marginBottom0">
+        <div class="tooltip">
+          <i class="fa fa-circle-info" style="font-size:13px;"></i>
+          <span class="tooltiptext">This area chart illustrates the trend of electricity generated from different sources in Canada over a decade, measured in megawatt-hours (MWh).  </span>
+        </div>
+        <h3 class="center">Electricity Generation Sources in
+        <span class="selectedGeo">${selectedGeo}</span>
+        <span> (MWh)</span>
+        </h3>
+        ${resize((width) => drawAreaChart(selectedGeo, width, width * 0.3 ))}
+      </div>
+    </div>
+
   </div>
 </div>
 
 <style>
-  .margin0 {
+  #observablehq-main {
+   margin-top: 12px; 
+  }
+  .marginTop0 {
     margin-top:0;!important
   }
+  .marginBottom0 {
+    margin-bottom:0;!important
+  }
+  
   .card {
     background-color:#e8e8e8;
   }
@@ -386,12 +394,13 @@ Renewable Energy Transition Progress in Canada
   position:relative;
 }
 .dashboardTitle {
-  /* margin:auto; */
+  margin-bottom:12px;
   text-align:center;
   width:100%;
 }
 .dashboardTitle h1 {
   margin:auto;
+  max-width:80%
 }
   .center {
     margin: 0;
@@ -442,4 +451,11 @@ Renewable Energy Transition Progress in Canada
   visibility: visible;
   opacity: 1;
 }
+
+
+.mainWrapper {
+    padding: 24px;
+    background-color: #b3b3b3;
+    border-radius: 9px;
+  }
   </style>
