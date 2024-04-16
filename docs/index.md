@@ -249,7 +249,14 @@ const input = Inputs.range([2012, 2022], {
 const year = view(input);
 ```
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+ <!-- <div class="tooltip">
+    <i class="fa fa-circle-info" style="font-size:20px;"></i>
+    <span class="tooltiptext">Tooltip text here</span>
+  </div> -->
+
 <div class="dashboardTitle">
+
 <h1>
 Renewable Energy Transition Progress in Canada
 </h1>
@@ -259,13 +266,19 @@ Renewable Energy Transition Progress in Canada
 <div>${input}</div>
 
 <div class="grid grid-cols-2" style="">
-  <div class="card">
-    <h2 class="center">% Of Renewable Electricity (${year})</h2>
+  <div class="card relative">
+    <div class="tooltip"> 
+      <i class="fa fa-circle-info" style="font-size:20px;"></i>
+      <span class="tooltiptext">This Geo Map shows the Percentage of renewable generated electricity in each province</span>
+    </div>
+    <h2 class="center"> % Of Renewable Electricity (${year}) </h2>
     ${resize((width) => renderMap(year, width, width * 0.6 ))}
+
   </div>
 
   <div class="card">
-    <h2 class="center">Electricity Generation Sources in ${selectedGeo} (${year})
+    <h2 class="center">Electricity Generation Sources in 
+    <span class="selectedGeo">${selectedGeo}</span> (${year})
     <span> (MWh)</span>
     </h2>
     ${resize((width) => drawChart(selectedGeo, width, width * 0.6))}
@@ -273,6 +286,12 @@ Renewable Energy Transition Progress in Canada
 </div>
 
 <style>
+.card .selectedGeo {
+  color:#4269d0;
+}
+.relative {
+  position:relative;
+}
 .dashboardTitle {
   /* margin:auto; */
   text-align:center;
@@ -296,4 +315,35 @@ Renewable Energy Transition Progress in Canada
   input [type=range] {
     cursor:pointer;
   }
+
+
+  /* tooltip */
+  .tooltip {
+  position: absolute;
+  top:12px;
+  right:12px;
+  display: inline-block;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 150%;
+  left: 50%;
+  margin-left: -60px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
   </style>
