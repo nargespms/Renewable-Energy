@@ -63,7 +63,7 @@ const geoInput = Inputs.select(
     "Northwest Territories",
     "Nunavut",
   ],
-  { value: currentGeo, label: "Geo", onChange: console.log }
+  { value: currentGeo, label: "Select Location", onChange: console.log }
 );
 const selectedGeo = view(geoInput);
 ```
@@ -144,7 +144,7 @@ function renderMap(year, width, height) {
       d3
         .geoConicEquidistant()
         .rotate([-86, -129.5, -170])
-        .translate([width/2, height/2])
+        .translate([width / 2, height / 2])
         .scale(width * 1.1),
     color: {
       scheme: "Greens",
@@ -154,7 +154,7 @@ function renderMap(year, width, height) {
       domain: [0, 100], // Only include positive values in the color scale domain
     },
     width,
-    height: height*1.4,
+    height: height * 1.4,
 
     marks: [
       on(geo, {
@@ -325,10 +325,35 @@ const year = view(input);
   </h1>
 </div>
 <div class="mainWrapper">
-  <div>${geoInput}</div>
-  <div>${input}</div>
-
   <div class="grid grid-cols-2">
+   <div class="filterSec">
+      <div>${geoInput}</div>
+      <div>${input}</div>
+    </div>
+    <div>
+    <h4 class="mb-8">Order of Transition as of 2022</h4>
+    <table>
+      <tr>
+        <th class="mn">MN</th>
+        <th class="qc">QC</th>
+        <th class="pe">PE</th>
+        <th class="nl">NL</th>
+        <th class="bc">BC</th>
+        <th class="yt">YT</th>
+        <th class="on">ON</th>
+        <th class="nt">NT</th>
+        <th class="nb">NB</th>
+        <th class="ns">NS</th>
+        <th class="sk">SK</th>
+        <th class="ab">AB</th>
+        <th class="nu">NU</th>
+      </tr>
+    </table>
+    </div>
+   
+  </div>
+
+  <div class="grid grid-cols-2 clearBoth">
   <!-- Geo Map -->
     <div class="card relative">
     <div class="tooltip"> 
@@ -370,6 +395,21 @@ const year = view(input);
 <style>
   #observablehq-main {
    margin-top: 12px; 
+  }
+  .clearBoth {
+    clear:both;
+  }
+  .filterSec {
+    margin-bottom: 12px;
+  }
+  .mb-8 {
+    margin-bottom:8px;
+  }
+  .mb-16 {
+    margin-bottom:16px;
+  }
+  .filterSec label {
+    font-weight: 700;
   }
   .marginTop0 {
     margin-top:0;!important
@@ -457,5 +497,54 @@ const year = view(input);
     padding: 24px;
     background-color: #b3b3b3;
     border-radius: 9px;
+  }
+
+  /* table */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  th, td {
+    border: 1px solid black;
+    padding: 5px;
+    text-align: center;
+  }
+  th {
+    background-color: #f2f2f2;
+  }
+  /* provinces colors */
+  .mn {
+    background-color: #00451b;
+    color:white
+  }
+  .qc , .pe , .nl {
+    background-color: #00481c;
+    color:white
+  }
+  .bc {
+    background-color: #025e26;
+    color:white
+  }
+  .yt {
+    background-color: #056a2c;
+    color:white
+  }
+  .on {
+    background-color: #9ed79a;
+  }
+  .nt {
+    background-color: #a1d99c;
+  }
+  .nb {
+    background-color: #b1e0ab;
+  }
+  .ns {
+    background-color: #cbebc6;
+  }
+  .sk {
+    background-color: #d3efcd;
+  }
+  .ab {
+    background-color: #e1f3db;
   }
   </style>
