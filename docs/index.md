@@ -98,12 +98,15 @@ function getPercentageByProvinces(year = "2012") {
 function on(mark, listeners = {}) {
   const render = mark.render;
   mark.render = function (facet, { x, y }, channels) {
-    // data[i] may or may not be the datum, depending on transforms
+    // 🌶 I'd like to be allowed to read the facet
+    // …  mutable debug = fx.domain()??
+
+    // 🌶 data[i] may or may not be the datum, depending on transforms
     // (at this stage we only have access to the materialized channels we requested)
     // but in simple cases it works
     const data = this.data;
 
-    //  since a point or band scale doesn't have an inverse, one from its domain and range
+    // 🌶 since a point or band scale doesn't have an inverse, create one from its domain and range
     if (x && x.invert === undefined)
       x.invert = d3.scaleQuantize(x.range(), x.domain());
     if (y && y.invert === undefined)
@@ -149,7 +152,7 @@ function renderMap(year, width, height) {
         .geoConicEquidistant()
         .rotate([-86, -129.5, -170])
         .translate([width / 2, height / 2])
-        .scale(width * 0.9),
+        .scale(width * 0.6),
     color: {
       scheme: "Greens",
       legend: true,
@@ -211,6 +214,78 @@ function getData(geo = "", year = "2022") {
 ```
 
 ```js
+function getFilteredData(geo = "Canada") {
+  const years = d3.range(2012, 2023); // From 2012 to 2022
+  const sources = ["Solar", "Tidal", "Wind", "Other", "Hydraulic"];
+
+  // Helper function to extract and convert data
+  const extractValue = (data, year) => {
+    const entry = data.find((d) => d.Geography === geo);
+    return entry && entry[year] ? toNum(entry[year]) : 0;
+  };
+
+  let formattedData = [];
+
+  // Iterate over each year
+  for (let year of years) {
+    sources.forEach((source) => {
+      const value = extractValue(
+        {
+          Solar: electSolar,
+          Tidal: electTidal,
+          Wind: electWind,
+          Other: electOther,
+          Hydraulic: electHydraulic,
+        }[source],
+        year
+      );
+
+      formattedData.push({
+        year,
+        source,
+        mwh: value,
+      });
+    });
+  }
+
+  return formattedData;
+}
+```
+
+```js
+// Function to draw an area chart with the filtered data
+function drawAreaChart(geo, width, height) {
+  const data = getFilteredData(geo);
+  return Plot.plot({
+    width,
+    height,
+    x: {
+      label: "Year →",
+      tickFormat: (d) => d.toString(),
+    },
+    y: {
+      label: "Electricity Generated (MWh) →",
+      grid: true,
+    },
+    marks: [
+      Plot.areaY(data, {
+        x: "year",
+        y: "mwh",
+        fill: "source",
+        order: "sum",
+        tip: true,
+        opacity: 0.6,
+      }),
+    ],
+    color: {
+      scheme: "Observable10",
+      legend: true, // Adds a legend to distinguish sources
+    },
+  });
+}
+```
+
+```js
 function drawChart(geo, width, height) {
   return Plot.plot({
     width,
@@ -224,7 +299,7 @@ function drawChart(geo, width, height) {
       }),
     ],
     color: {
-      scheme: "Spectral",
+      scheme: "Observable10",
       legend: true,
       width: 340,
       label: "Source",
@@ -250,10 +325,6 @@ const year = view(input);
 ```
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
- <!-- <div class="tooltip">
-    <i class="fa fa-circle-info" style="font-size:20px;"></i>
-    <span class="tooltiptext">Tooltip text here</span>
-  </div> -->
 
 <div class="dashboardTitle">
 
@@ -261,19 +332,17 @@ const year = view(input);
 Renewable Energy Transition Progress in Canada
 </h1>
 </div>
-
 <div>${geoInput}</div>
 <div>${input}</div>
 
 <div class="grid grid-cols-2" style="">
   <div class="card relative">
-    <div class="tooltip"> 
+   <div class="tooltip"> 
       <i class="fa fa-circle-info" style="font-size:20px;"></i>
       <span class="tooltiptext">This Geo Map shows the Percentage of renewable generated electricity in each province</span>
     </div>
-    <h2 class="center"> % Of Renewable Electricity (${year}) </h2>
-    ${resize((width) => renderMap(year, width, width * 0.6 ))}
-
+    <h2 class="center">% Of Renewable Electricity (${year})</h2>
+    ${resize((width) => renderMap(year, width, width * 0.4 ))}
   </div>
 
   <div class="card">
@@ -281,12 +350,27 @@ Renewable Energy Transition Progress in Canada
     <span class="selectedGeo">${selectedGeo}</span> (${year})
     <span> (MWh)</span>
     </h2>
-    ${resize((width) => drawChart(selectedGeo, width, width * 0.6))}
+    ${resize((width) => drawChart(selectedGeo, width, width * 0.4 ))}
+  </div>
+
+  <div class="card">
+    <h2 class="center">Electricity Generation Sources in 
+    <span class="selectedGeo">${selectedGeo}</span>
+    <span> (MWh)</span>
+    </h2>
+    ${resize((width) => drawAreaChart(selectedGeo, width, width * 0.4 ))}
   </div>
 </div>
 
 <style>
-.card .selectedGeo {
+  .card {
+    background-color:#e8e8e8;
+  }
+  .card h2 {
+    padding: 12px;
+    color: #000;
+  }
+  .card .selectedGeo {
   color:#4269d0;
 }
 .relative {
@@ -308,14 +392,13 @@ Renewable Energy Transition Progress in Canada
     font-size: 35px;
     margin-bottom: 24px;
   }
-.inputs-3a86ea-input > input[type=range] {
+  .inputs-3a86ea-input > input[type=range] {
     cursor:pointer;
 
 }
   input [type=range] {
     cursor:pointer;
   }
-
 
   /* tooltip */
   .tooltip {
