@@ -98,15 +98,8 @@ function getPercentageByProvinces(year = "2012") {
 function on(mark, listeners = {}) {
   const render = mark.render;
   mark.render = function (facet, { x, y }, channels) {
-    // 🌶 I'd like to be allowed to read the facet
-    // …  mutable debug = fx.domain()??
-
-    // 🌶 data[i] may or may not be the datum, depending on transforms
-    // (at this stage we only have access to the materialized channels we requested)
-    // but in simple cases it works
     const data = this.data;
 
-    // 🌶 since a point or band scale doesn't have an inverse, create one from its domain and range
     if (x && x.invert === undefined)
       x.invert = d3.scaleQuantize(x.range(), x.domain());
     if (y && y.invert === undefined)
@@ -152,7 +145,7 @@ function renderMap(year, width, height) {
         .geoConicEquidistant()
         .rotate([-86, -129.5, -170])
         .translate([width / 2, height / 2])
-        .scale(width * 0.6),
+        .scale(width * 0.7),
     color: {
       scheme: "Greens",
       legend: true,
@@ -335,40 +328,56 @@ Renewable Energy Transition Progress in Canada
 <div>${geoInput}</div>
 <div>${input}</div>
 
-<div class="grid grid-cols-2" style="">
+<div class="grid grid-cols-2">
+<!-- Geo Map -->
   <div class="card relative">
    <div class="tooltip"> 
-      <i class="fa fa-circle-info" style="font-size:20px;"></i>
+      <i class="fa fa-circle-info" style="font-size:13px;"></i>
       <span class="tooltiptext">This Geo Map shows the Percentage of renewable generated electricity in each province</span>
     </div>
-    <h2 class="center">% Of Renewable Electricity (${year})</h2>
-    ${resize((width) => renderMap(year, width, width * 0.4 ))}
+    <h3 class="center">% Of Renewable Electricity (${year})</h3>
+    ${resize((width) => renderMap(year, width, width * 0.5 ))} 
   </div>
 
-  <div class="card">
-    <h2 class="center">Electricity Generation Sources in 
-    <span class="selectedGeo">${selectedGeo}</span> (${year})
-    <span> (MWh)</span>
-    </h2>
-    ${resize((width) => drawChart(selectedGeo, width, width * 0.4 ))}
-  </div>
-
-  <div class="card">
-    <h2 class="center">Electricity Generation Sources in 
-    <span class="selectedGeo">${selectedGeo}</span>
-    <span> (MWh)</span>
-    </h2>
-    ${resize((width) => drawAreaChart(selectedGeo, width, width * 0.4 ))}
+  <div>
+  <!-- BarChart -->
+    <div class="card relative margin0">
+      <div class="tooltip"> 
+       <i class="fa fa-circle-info" style="font-size:13px;"></i>
+       <span class="tooltiptext">This bar chart displays the composition of electricity generation by source within the selected geographical region, such as Canada or a specific province, for a given year.   </span>
+      </div>
+      <h3 class="center">Electricity Generation Sources in 
+        <span class="selectedGeo">${selectedGeo}</span> (${year})<span> (MWh)</span>
+      </h3>
+      ${resize((width) => drawChart(selectedGeo, width, width * 0.3 ))}
+    </div>
+    <!-- Histogram -->
+    <div class="card relative">
+      <div class="tooltip">
+        <i class="fa fa-circle-info" style="font-size:13px;"></i>
+        <span class="tooltiptext">This area chart illustrates the trend of electricity generated from different sources in Canada over a decade, measured in megawatt-hours (MWh).  </span>
+      </div>
+      <h3 class="center">Electricity Generation Sources in
+      <span class="selectedGeo">${selectedGeo}</span>
+      <span> (MWh)</span>
+      </h3>
+      ${resize((width) => drawAreaChart(selectedGeo, width, width * 0.3 ))}
+    </div>
   </div>
 </div>
 
 <style>
+  .margin0 {
+    margin-top:0;!important
+  }
   .card {
     background-color:#e8e8e8;
   }
-  .card h2 {
-    padding: 12px;
+  .card h3 {
+    padding: 0 16px 8px 16px;
     color: #000;
+    font-weight:700;
+
   }
   .card .selectedGeo {
   color:#4269d0;
@@ -410,19 +419,23 @@ Renewable Energy Transition Progress in Canada
 
 .tooltip .tooltiptext {
   visibility: hidden;
-  width: 120px;
+  width: 320px;
   background-color: black;
   color: #fff;
   text-align: center;
   border-radius: 6px;
-  padding: 5px 0;
+  padding: 5px 12px;
+
+  /* Positioning */
   position: absolute;
   z-index: 1;
-  bottom: 150%;
-  left: 50%;
-  margin-left: -60px;
+  bottom: 100%; /* Adjust this if you want more space between the icon and the tooltip */
+  right : 0%; /* Start from the far left */
+  
+  
+  /* Visibility transition */
   opacity: 0;
-  transition: opacity 0.3s;
+  transition: opacity 0.3s, visibility 0.3s;
 }
 
 .tooltip:hover .tooltiptext {
