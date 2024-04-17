@@ -478,6 +478,9 @@ function getTable(year, id) {
 </div>
 
 <style>
+  body {
+    font-family:initial;
+  }
   #observablehq-main {
    margin-top: 12px; 
   }
@@ -514,8 +517,8 @@ function getTable(year, id) {
 
   }
   .card .selectedGeo {
-  color:#4269d0;
-}
+    color:#4269d0;
+  }
 .relative {
   position:relative;
 }
@@ -602,6 +605,9 @@ function getTable(year, id) {
   }
   .GeoMap svg path {
     cursor:pointer;
+  }
+  .card {
+    font-family:initial;
   }
 
   </style>
