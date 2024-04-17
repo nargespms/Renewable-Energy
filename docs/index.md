@@ -461,7 +461,7 @@ function getTable(year, id) {
         </h3>
         ${resize((width) => drawChart(selectedGeo, width, width * 0.3 ))}
       </div>
-      <!-- Histogram -->
+      <!-- Area chart -->
       <div class="card relative marginBottom0">
         <div class="tooltip">
           <i class="fa fa-circle-info" style="font-size:13px;"></i>
@@ -511,6 +511,7 @@ function getTable(year, id) {
     padding: 0 16px 8px 16px;
     color: #000;
     font-weight:700;
+    font-size:21px;
 
   }
   .card .selectedGeo {
