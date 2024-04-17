@@ -7,7 +7,6 @@ toc: false
 <!-- Load the data -->
 
 ```js
-
 // Load the economic impact data and the GeoJSON map
 const impactData = FileAttachment("./data/economicImpact.json").json();
 const canadaMap = FileAttachment("./data/canadaProvinces.geojson").json();
@@ -320,19 +319,19 @@ const year = view(input);
 
 ```js
 const provinceMap = {
-  "Alberta": "AB",
+  Alberta: "AB",
   "British Columbia": "BC",
-  "Manitoba": "MB",
+  Manitoba: "MB",
   "New Brunswick": "NB",
   "Newfoundland and Labrador": "NL",
   "Nova Scotia": "NS",
-  "Ontario": "ON",
+  Ontario: "ON",
   "Prince Edward Island": "PE",
-  "Quebec": "QC",
-  "Saskatchewan": "SK",
+  Quebec: "QC",
+  Saskatchewan: "SK",
   "Northwest Territories": "NT",
-  "Nunavut": "NU",
-  "Yukon Territory": "YT"
+  Nunavut: "NU",
+  "Yukon Territory": "YT",
 };
 
 function getGradientColorWithTextColor(color, percentage) {
@@ -341,7 +340,7 @@ function getGradientColorWithTextColor(color, percentage) {
 
   // Converts hex color to RGB
   const hexToRgb = (hex) => {
-    hex = hex.replace(/^#/, '');
+    hex = hex.replace(/^#/, "");
     const bigint = parseInt(hex, 16);
     const r = (bigint >> 16) & 255;
     const g = (bigint >> 8) & 255;
@@ -351,10 +350,15 @@ function getGradientColorWithTextColor(color, percentage) {
 
   // Converts RGB to hex
   const rgbToHex = (r, g, b) => {
-    return "#" + [r, g, b].map(x => {
-      const hex = x.toString(16);
-      return hex.length === 1 ? '0' + hex : hex;
-    }).join('');
+    return (
+      "#" +
+      [r, g, b]
+        .map((x) => {
+          const hex = x.toString(16);
+          return hex.length === 1 ? "0" + hex : hex;
+        })
+        .join("")
+    );
   };
 
   // Linear interpolation between white (255,255,255) and the target color
@@ -381,33 +385,35 @@ function getGradientColorWithTextColor(color, percentage) {
 
   // Decide text color based on luminance
   const textLuminance = luminance(r, g, b);
-  const textColor = textLuminance > 0.179 ? 'black' : 'white';
+  const textColor = textLuminance > 0.179 ? "black" : "white";
 
   return {
     backgroundColor: hexColor,
-    textColor: textColor
+    textColor: textColor,
   };
 }
 
-
-
 function getTable(year, id) {
-  const provinces = getPercentageByProvinces(year).features.map(p => ({name: p.properties.name, percentage: p.properties.percentage})).sort((a,b) => b.percentage - a.percentage);
-  let html = '';
-  
-  provinces.forEach(p => {
+  const provinces = getPercentageByProvinces(year)
+    .features.map((p) => ({
+      name: p.properties.name,
+      percentage: p.properties.percentage,
+    }))
+    .sort((a, b) => b.percentage - a.percentage);
+  let html = "";
+
+  provinces.forEach((p) => {
     p.code = provinceMap[p.name];
-    p.color = getGradientColorWithTextColor('#1A4320', p.percentage/100);
+    p.color = getGradientColorWithTextColor("#1A4320", p.percentage / 100);
 
-  html += `<td style="background-color:${p.color.backgroundColor}; color: ${p.color.textColor}">${p.code}</td>`;
-
-  })
+    html += `<td style="background-color:${p.color.backgroundColor}; color: ${p.color.textColor}">${p.code}</td>`;
+  });
 
   document.getElementById(id).innerHTML = html;
 
-  return '';
+  return "";
 }
-``` 
+```
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
@@ -440,7 +446,7 @@ function getTable(year, id) {
         <i class="fa fa-circle-info" style="font-size:13px;"></i>
         <span class="tooltiptext">This Geo Map shows the Percentage of renewable generated electricity in each province</span>
       </div>
-      <h3 class="center">% Of Renewable Electricity (${year})</h3>
+      <h3 class="center">% Of Renewable Electricity Generated (${year})</h3>
       ${resize((width) => renderMap(year, width, width * 0.5 ))} 
     </div>
     <div>
@@ -461,7 +467,7 @@ function getTable(year, id) {
           <i class="fa fa-circle-info" style="font-size:13px;"></i>
           <span class="tooltiptext">This area chart illustrates the trend of electricity generated from different sources in Canada over a decade, measured in megawatt-hours (MWh).  </span>
         </div>
-        <h3 class="center">Electricity Generation Sources in
+        <h3 class="center">Trends in Electricity Generation by Source in 
         <span class="selectedGeo">${selectedGeo}</span>
         <span> (MWh)</span>
         </h3>
