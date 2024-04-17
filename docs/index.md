@@ -595,6 +595,7 @@ function getTable(year, id) {
     border: 1px solid black;
     padding: 5px;
     text-align: center;
+    cursor:default;
   }
   th {
     background-color: #f2f2f2;
