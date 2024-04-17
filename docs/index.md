@@ -94,7 +94,6 @@ function getPercentageByProvinces(year = "2012") {
 ```
 
 ```js
-// TODO revise with Plot’s render transform (0.6.10)
 function on(mark, listeners = {}) {
   const render = mark.render;
   mark.render = function (facet, { x, y }, channels) {
@@ -441,7 +440,7 @@ function getTable(year, id) {
 
   <div class="grid grid-cols-2 clearBoth">
   <!-- Geo Map -->
-    <div class="card relative">
+    <div class="card relative GeoMap">
     <div class="tooltip"> 
         <i class="fa fa-circle-info" style="font-size:13px;"></i>
         <span class="tooltiptext">This Geo Map shows the Percentage of renewable generated electricity in each province</span>
@@ -511,7 +510,7 @@ function getTable(year, id) {
     padding: 0 16px 8px 16px;
     color: #000;
     font-weight:700;
-    font-size:21px;
+    font-size:22px;
 
   }
   .card .selectedGeo {
@@ -551,6 +550,7 @@ function getTable(year, id) {
   top:12px;
   right:12px;
   display: inline-block;
+  cursor:help;
 }
 
 .tooltip .tooltiptext {
@@ -598,6 +598,9 @@ function getTable(year, id) {
   }
   th {
     background-color: #f2f2f2;
+  }
+  .GeoMap svg path {
+    cursor:pointer;
   }
 
   </style>
