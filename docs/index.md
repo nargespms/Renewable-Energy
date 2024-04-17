@@ -406,7 +406,7 @@ function getTable(year, id) {
     p.code = provinceMap[p.name];
     p.color = getGradientColorWithTextColor("#1A4320", p.percentage / 100);
 
-    html += `<td style="background-color:${p.color.backgroundColor}; color: ${p.color.textColor}">${p.code}</td>`;
+    html += `<td style="background-color:${p.color.backgroundColor}; color: ${p.color.textColor}" title="${p.name}">${p.code}</td>`;
   });
 
   document.getElementById(id).innerHTML = html;
