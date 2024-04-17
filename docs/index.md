@@ -428,7 +428,7 @@ function getTable(year, id) {
       <div>${input}</div>
     </div>
     <div>
-    <h4 class="mb-8">Order of Transition as of ${year}</h4>
+    <h4 class="mb-8">Order of Transition as of ${year} <i class="fa-solid fa-arrow-right ml-4"></i></h4>
     <table>
       <tr id="provincesTable">
         ${getTable(year, 'provincesTable') }
@@ -495,6 +495,9 @@ function getTable(year, id) {
   }
   .mb-16 {
     margin-bottom:16px;
+  }
+  .ml-4 {
+    margin-left:4px;
   }
   .filterSec label {
     font-weight: 700;
@@ -593,6 +596,7 @@ function getTable(year, id) {
   table {
     width: 100%;
     border-collapse: collapse;
+    margin:0;
   }
   th, td {
     border: 1px solid black;
